@@ -1,2 +1,6 @@
 # Space-Invaders
- Made a 'Space Invaders' Game while learning core functions of pygame Lib. 
+Shoot the Invaders before they shoot you! Or before they get past your defense!
+
+TODO:
+Add rewards system.
+Once past level 10; Player gets two ships for defense?  Or can purchase more ships?
