@@ -94,12 +94,13 @@ class Ship:
 
 
 class Player(Ship):
-    def __init__(self, x, y, hp=100):
+    def __init__(self, x, y, hp=100, kcount=0):
         super().__init__(x, y, hp)
         self.player_img = YELLOW_SPACE_SHIP
         self.laser_img = YELLOW_LASER
         self.mask = pygame.mask.from_surface(self.player_img)
         self.max_health = hp
+        self.kcount = kcount
 
     def move_lasers(self, vel, objs):
         self.cooldown()
@@ -111,7 +112,8 @@ class Player(Ship):
                 for obj in objs:
                     if laser.collision(obj):
                         objs.remove(obj)
-                        self.lasers.remove(laser)
+                        self.kcount += 1
+                        #self.lasers.remove(laser)
 
     def draw(self, window):
         super().draw(window)
@@ -170,7 +172,7 @@ def main():
     player_vel = 5
     laser_vel = 4
 
-    player = Player(300, 630)
+    player = Player(200, 630)
 
     clock = pygame.time.Clock()
 
@@ -180,8 +182,10 @@ def main():
         # Draw Text
         life_label = main_font.render(f"Level: {lvl}", False, (255, 255, 255))
         level_label = main_font.render(f"Lives: {lives}", False, (255, 255, 255))
+        kills_label = main_font.render(f"Kill Count: {player.kcount}", False, (255, 0, 0))
         WIN.blit(life_label, (10, 10))
         WIN.blit(level_label, (WIDTH - level_label.get_width() - 10, 10))
+        WIN.blit(kills_label, (WIDTH - life_label.get_width() - 200, 650))
 
         for e in enemy:
             e.draw(WIN)
@@ -236,12 +240,13 @@ def main():
             i.move(vel=enemyVel)
             i.move_lasers(laser_vel, player)
 
-            if random.randrange(0, 6*60) == 1:
+            if random.randrange(0, 6*60) == 1:  # How often enemies shoot
                 i.shoot()
 
-            if collide(i, player):
+            if collide(i, player):  # Handles player collision with enemies
                 player.hp -= 10
                 enemy.remove(i)
+                player.kcount += 1
             elif i.y + i.get_height() > HEIGHT:
                 lives -= 1
                 enemy.remove(i)
